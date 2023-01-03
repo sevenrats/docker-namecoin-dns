@@ -1,0 +1,12 @@
+version: '3'
+services:
+  electrum:
+    image: dns
+    container_name: dns
+    ports:
+      - 1053:1053/udp
+    environment:
+      - ELECTRUM_USER=electrum
+      - ELECTRUM_PASSWORD=electrumz
+    volumes:
+      - ./config/electrum-nmc:/data/electrum-nmc # blockchain data

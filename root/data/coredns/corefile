@@ -1,0 +1,8 @@
+.:1053 {
+    loop
+    health
+    forward . /etc/resolv.conf
+}
+bit:1053 {
+    forward . 127.0.0.1:7053
+}
