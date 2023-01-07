@@ -10,10 +10,19 @@ set -ex
   #none
 
 # Configure Stuff
-electrum-nmc $FLAGS --offline setconfig rpcuser ${ELECTRUM_USER}
-electrum-nmc $FLAGS --offline setconfig rpcpassword ${ELECTRUM_PASSWORD}
-electrum-nmc $FLAGS --offline setconfig rpchost 0.0.0.0
-electrum-nmc $FLAGS --offline setconfig rpcport 7000
+for CONF in ${CONFS[@]}
+do
+  if ! [ -f /data/"$CONF" ]; then
+    echo "Copying /etc/$CONF to /data/$CONF"
+    mkdir -p /data/$CONF && rmdir /data/$CONF
+    cp /etc/$CONF /data/$CONF
+  fi
+done
+
+electrum-nmc $FLAGS --offline setconfig rpcuser $ELECTRUM_USER && \
+electrum-nmc $FLAGS --offline setconfig rpcpassword $ELECTRUM_PASSWORD && \
+electrum-nmc $FLAGS --offline setconfig rpchost 0.0.0.0 && \
+electrum-nmc $FLAGS --offline setconfig rpcport 8334 && \
 
 # Run application
 electrum-nmc $FLAGS daemon & \
