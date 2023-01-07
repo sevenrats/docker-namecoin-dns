@@ -1,6 +1,7 @@
 .:1053 {
     loop
     health
+    ready
     forward . /etc/resolv.conf
 }
 bit:1053 {

@@ -1,22 +1,50 @@
 #!/usr/bin/env bash
 
 # Proxy signals
-sp_processes=("electrum-nmc" "ncdns" "coredns")
+sp_processes=("namecoind" "namecoin-cli" "ncdns" "coredns")
 . /signalproxy.sh
 
-set -ex
+#set -e
+
+
 
 # Overload Traps
   #none
 
 # Configure Stuff
-electrum-nmc $FLAGS --offline setconfig rpcuser ${ELECTRUM_USER}
-electrum-nmc $FLAGS --offline setconfig rpcpassword ${ELECTRUM_PASSWORD}
-electrum-nmc $FLAGS --offline setconfig rpchost 0.0.0.0
-electrum-nmc $FLAGS --offline setconfig rpcport 7000
+for CONF in ${CONFS[@]}
+do
+  if ! [ -f /data/"$CONF" ]; then
+    echo "Copying /etc/$CONF to /data/$CONF"
+    mkdir -p /data/$CONF && rmdir /data/$CONF
+    cp /etc/$CONF /data/$CONF
+  fi
+done
 
+# Define Healthcheck Functions
+_nmc_core_is_up () {
+    return 1
+}
+_health_namecoind () {
+  echo "We are doing this shit"
+  return 0
+}
+_health_coredns () {
+  curl -s http://localhost:1053/health
+}
 # Run application
-electrum-nmc $FLAGS daemon & \
+namecoind -conf=/data/namecoin-core/namecoin.conf >/dev/null & \
 ncdns -conf /data/ncdns/ncdns.conf & \
 coredns -conf /data/coredns/corefile & \
+# HealthCheck
+until _nmc_core_is_up
+do
+    sleep 15
+    if namecoin-cli getblockchaininfo | grep -q '"initialblockdownload": true'; then
+      echo "Namecoin-Core is still syncing with the blockchain."
+    fi
+    _health_namecoind
+    _health_ncdns
+    _health_coredns
+done & \
 wait -n

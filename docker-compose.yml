@@ -1,12 +1,13 @@
 version: '3'
 services:
   electrum:
-    image: sevenrats/nmc-dns
+    image: sevenrats/nmc-dns:core
     container_name: dns
     ports:
       - 1053:1053/udp
+      - 8334:8334
     environment:
       - ELECTRUM_USER=namecoin
       - ELECTRUM_PASSWORD=namecoinz
     volumes:
-      - ./config/electrum-nmc:/data/electrum-nmc # blockchain data
+      - ./data/:/data/ # blockchain data
