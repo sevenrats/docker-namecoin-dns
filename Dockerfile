@@ -2,7 +2,7 @@ FROM alpine:latest as ncdns-builder
 ENV GOPATH=/gopath
 RUN \
 mkdir /gopath && \
-apk add --no-cache libcap-dev git go bash sed
+apk add --no-cache libcap-dev git go bash sed gcc musl-dev
 RUN \
 git clone https://github.com/namecoin/x509-compressed.git && \
 cd x509-compressed && \
