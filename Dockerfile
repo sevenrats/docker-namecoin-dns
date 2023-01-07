@@ -29,8 +29,13 @@ go install ./...
 FROM sevenrats/electrum-nmc
 USER root
 RUN \
-apk add --no-cache coredns
+apk add --no-cache coredns libcap curl
 USER namecoin
+
+ENV NCDNS_CONF "ncdns/ncdns.conf"
+ENV COREDNS_CONF "coredns/corefile"
+ENV CONFS $NCDNS_CONF $COREDNS_CONF
+
 EXPOSE 1053
 COPY root /
 COPY --from=ncdns-builder /gopath/bin /usr/bin

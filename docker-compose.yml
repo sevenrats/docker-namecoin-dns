@@ -9,4 +9,4 @@ services:
       - ELECTRUM_USER=namecoin
       - ELECTRUM_PASSWORD=namecoinz
     volumes:
-      - ./config/electrum-nmc:/data/electrum-nmc # blockchain data
+      - ./data/electrum-nmc:/data/electrum-nmc # blockchain data
